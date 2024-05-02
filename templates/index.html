@@ -1,0 +1,110 @@
+<!DOCTYPE html> 
+<html> 
+<head>
+    <title>Dynamic Form</title>
+</head>
+<body> 
+    <h2>Welcome To GFG</h2> 
+    <p>Default code has been loaded into the Editor.</p> 
+  
+    <form id="myForm" action="/form-submit" method="post"> 
+        <div id="formFields">
+            <!-- Initially, only the first set of fields are present -->
+            <label for="name">Name</label> 
+            <input type="text" name="name" /> 
+            <label for="email">Email</label> 
+            <input type="email" name="email" /> 
+            <label for="telnum">Tel No.</label> 
+            <input type="tel" name="telnum" /> 
+            <label for="rollno">Roll No.</label> 
+            <input type="number" name="rollno" /> 
+        </div>
+        <button type="button" onclick="addDetails()">Add Details</button>
+        <button type="button" onclick="formSubmit()">Submit</button>
+    </form> 
+</body>
+<script>
+    function addDetails() {
+        var formFields = document.getElementById('formFields');
+        
+        var newFields = document.createElement('div');
+        newFields.innerHTML = `
+            <label for="name">Name</label> 
+            <input type="text" name="name" /> 
+            <label for="email">Email</label> 
+            <input type="email" name="email" /> 
+            <label for="telnum">Tel No.</label> 
+            <input type="tel" name="telnum" /> 
+            <label for="rollno">Roll No.</label> 
+            <input type="number" name="rollno" /> 
+        `;
+        
+        formFields.appendChild(newFields);
+    }
+    //This Method is working as Object JSON 
+    function formSubmit(){
+        var allInputs = document.querySelectorAll('#formFields input');
+        var formData = {};
+
+        for (var i = 0; i < allInputs.length; i += 4) {
+            var studentId = i / 4 + 1; // Calculate student ID
+            console.log(studentId)
+            var studentKey = 'Student ' + studentId;
+            formData[studentKey] = {
+                name: allInputs[i].value,
+                email: allInputs[i + 1].value,
+                telnum: allInputs[i + 2].value,
+                rollno: allInputs[i + 3].value
+            };
+        }
+
+        fetch('/form-submit',{
+            method: 'post',
+            headers:{
+                'Content-Type': 'application/json'
+            },
+            body:JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+        })
+        .catch(error => {
+            console.error('Error:', error)
+        })
+    }
+
+    //This Method working as data send in backend Array JSON
+    // function formSubmit(){
+    //     var allInputs = document.querySelectorAll('#formFields input');
+    //     var formData = [];
+
+    //     for (var i = 0; i < allInputs.length; i += 4) {
+    //         var obj = {
+    //             name: allInputs[i].value,
+    //             email: allInputs[i + 1].value,
+    //             telnum: allInputs[i + 2].value,
+    //             rollno: allInputs[i + 3].value
+    //         };
+    //         formData.push(obj);
+    //     }
+
+    //     fetch('/form-submit',{
+    //         method: 'post',
+    //         headers:{
+    //             'Content-Type': 'application/json'
+    //         },
+    //         body:JSON.stringify(formData)
+    //     })
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         console.log(data)
+    //     })
+    //     .catch(error => {
+    //         console.error('Error:', error)
+    //     })
+    // }
+</script>
+  
+</html>
+

@@ -1,0 +1,108 @@
+<!DOCTYPE html> 
+<html> 
+<head>
+    <title>Dynamic Form</title>
+</head>
+<body> 
+    <h2>Welcome To GFG</h2> 
+    <p>Default code has been loaded into the Editor.</p> 
+  
+    <form id="myForm" action="/form-submit2" method="post"> 
+        <label for="username">Username</label>
+        <input type="text" name="username" value="1">
+        <label for="lid_name">lid_name</label>
+        <input type="text" name="lid_name" id="lid_name"><br><br>
+        <div id="formFields">
+            <!-- Initially, only the first set of fields are present -->
+            <label for="name">Product Name</label> 
+            <input type="text" name="name" /> 
+            <label for="price">Price</label> 
+            <input type="number" name="price" />
+        </div><br>
+        <button type="button" onclick="addDetails()">Add Details</button>
+        <button type="button" onclick="formSubmit()">Submit</button>
+    </form> 
+</body>
+<script>
+    function addDetails() {
+        var formFields = document.getElementById('formFields');
+        
+        var newFields = document.createElement('div');
+        newFields.innerHTML = `
+            <label for="name">Product Name</label> 
+            <input type="text" name="name" /> 
+            <label for="price">Price</label> 
+            <input type="number" name="price" /> 
+        `;
+        
+        formFields.appendChild(newFields);
+    }
+    //This Method is working as Object JSON 
+    function formSubmit(){
+        var username = document.querySelector('input[name="username"]').value;
+        var lid_name = document.getElementById('lid_name').value;
+
+        var allInputs = document.querySelectorAll('#formFields input');
+        var formData = {
+            username: username,
+            lid_name: lid_name,
+            data: []
+        };
+
+        for (var i = 0; i < allInputs.length; i += 2) {
+            var obj = {
+                name: allInputs[i].value,
+                price: allInputs[i + 1].value
+            };
+            formData.data.push(obj);
+        }
+
+        fetch('/lid/create',{
+            method: 'post',
+            headers:{
+                'Content-Type': 'application/json'
+            },
+            body:JSON.stringify(formData)
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+            // Redirect to /lid/ after successful addition
+                window.location.href = '/lid/';
+        })
+        .catch(error => {
+            console.error('Error:', error)
+        })
+    }
+
+    //This Method working as data send in backend Array JSON
+    // function formSubmit(){
+    //     var allInputs = document.querySelectorAll('#formFields input');
+    //     var formData = [];
+
+    //     for (var i = 0; i < allInputs.length; i += 2) {
+    //         var obj = {
+    //             name: allInputs[i].value,
+    //             price: allInputs[i + 1].value
+    //         };
+    //         formData.push(obj);
+    //     }
+
+    //     fetch('/form-submit',{
+    //         method: 'post',
+    //         headers:{
+    //             'Content-Type': 'application/json'
+    //         },
+    //         body:JSON.stringify(formData)
+    //     })
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         console.log(data)
+    //     })
+    //     .catch(error => {
+    //         console.error('Error:', error)
+    //     })
+    // }
+</script>
+  
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LID List</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+  <div class="container">
+    <h2>LID List</h2>
+    <table class="table table-bordered">
+      <thead>
+        <tr>
+          <th>LID_ID</th>
+          <th>LID Name</th>
+          <th>Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for lid in lid_records %}
+        <tr>
+          <td>{{ lid[0] }}</td> <!-- LID ID -->
+          <td>{{ lid[1] }}</td> <!-- LID Name -->
+          <td>{{ lid[2] }}</td> <!-- Date -->
+          <td>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#lidProductsModal{{ lid[0] }}" onclick="viewCart('{{lid[0]}}')">
+              View Products
+            </button>
+            <!-- Modal -->
+            <div class="modal fade" id="lidProductsModal{{ lid[0] }}" tabindex="-1" role="dialog" aria-labelledby="lidProductsModalLabel{{ lid[0] }}" aria-hidden="true">
+              <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h5 class="modal-title" id="lidProductsModalLabel{{ lid[0] }}">Products for LID: {{ lid[0] }}</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">&times;</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <!-- Product list will be dynamically inserted here -->
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Product_ID</th>
+                          <th>Product Name</th>
+                          <th>Price</th>
+                        </tr>
+                      </thead>
+                      <!-- <tbody id="productList"> -->
+                      <tbody id="productList{{ lid[0] }}"></tbody>
+                        
+                        <!-- Lid products will be inserted here -->
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  
+  <!-- Bootstrap JavaScript -->
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+
+  <!-- Include jQuery library -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  
+
+
+  <script>
+  //function viewCart(lidId) {
+  // $.ajax({
+  //     url: '/lid/cart?lid_id=' + lidId,
+  //     type: 'GET',
+  //     success: function(response) {
+  //         console.log('Returned data from backend:', response)
+  //         // Clear existing content in the productList tbody
+  //         $('#productList' + lidId).empty()
+  //         // Iterate over each item in the lid_products array
+  //         response.lid_products.forEach(function(item) {
+  //             // Create a new row for each product
+  //             var row = $('<tr>');
+  //             row.append($('<td>').text(item[0])); // Product ID
+  //             row.append($('<td>').text(item[1])); // Product Name
+  //             row.append($('<td>').text(item[2])); // Product Price
+  //             // Append the row to the productList tbody
+  //             $('#productList' + lidId).append(row);
+  //         })
+  //         // Show the modal after updating its content
+  //         $('#cartModal' + lidId).modal('show');
+  //     },
+  //     error: function(xhr, status, error) {
+  //         console.error('Error:', error);
+  //     }
+  // });
+  //
+  function viewCart(lidId){
+    $.ajax({
+      url: '/lid/cart?lid_id=' +lidId,
+      type: 'GET',
+      success: function(response){
+        console.log(response);
+        $('#productList' + lidId).empty();
+        response.lid_products.forEach(function(item){
+            var row = $('<tr>');
+            row.append($('<td>').text(item[0]));
+            row.append($('<td>').text(item[1]));
+            row.append($('<td>').text(item[2]));
+            $('#productList' + lidId).append(row);
+        });
+      },
+      error: function(error){
+        console.log(error);
+      }
+    });
+  }
+  
+</script>
+</body>
+</html>
